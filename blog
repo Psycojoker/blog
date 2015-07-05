@@ -31,7 +31,7 @@ def install_blog():
 
 def post(title):
     install_blog()
-    # os.environ("PWD") = os.path.expanduser("~/code/blog/"
+    os.system("vi %s" % os.path.expanduser("~/code/blog/worlddomination.be/content/blog/%s/%s.html" % (current_year(), slugify(title.decode("Utf-8")))))
 
 
 parser = argh.ArghParser()
