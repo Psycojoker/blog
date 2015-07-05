@@ -2,6 +2,7 @@
 
 import os
 import re
+import sys
 import argh
 import shutil
 from datetime import date
@@ -51,6 +52,10 @@ def image(path, name=None, section="misc"):
 
     path = os.path.expanduser(path)
     path = os.path.abspath(path)
+
+    if not os.path.exists(path):
+        print "Error: %s doesn't exists"
+        sys.exit(1)
 
     if name is None:
         name = os.path.split(path)[1]
