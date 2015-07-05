@@ -44,8 +44,30 @@ def post(title):
     os.system("vi %s" % os.path.join(base_path, "content/blog/%s/%s.html" % (current_year(), slugify(title.decode("Utf-8")))))
 
 
+def image(path, name=None, section="misc"):
+    target_dir = os.path.join(base_path, "media/img", section)
+    if not os.path.exists(target_dir):
+        os.makedirs(target_dir)
+
+    path = os.path.expanduser(path)
+    path = os.path.abspath(path)
+
+    if name is None:
+        name = os.path.split(path)[1]
+    elif "." not in name:
+        name += "." + path.split(".")[-1]
+
+    target = os.path.join(target_dir, name)
+
+    shutil.copy(path, target)
+
+    md = "![%s](%s)" % (name, target)
+    os.system("echo '%s' | xclip -i" % md)
+    print md
+
+
 parser = argh.ArghParser()
-parser.add_commands([post])
+parser.add_commands([post, image])
 
 if __name__ == '__main__':
     parser.dispatch()
