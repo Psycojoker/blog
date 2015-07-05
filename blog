@@ -48,6 +48,26 @@ def post(title):
     os.system("vi %s" % os.path.join(base_path, "content/blog/%s/%s.html" % (current_year(), slugify(title.decode("Utf-8")))))
 
 
+def generate_html_and_thumbnail(path, name, target_dir, section):
+    image = Image.open(path)
+
+    if image.size[0] > 848:
+        print "[info] generating thumbnail"
+        image.thumbnail((848, 848))
+
+        thumbnail_name = ".".join(name.split(".")[:-1]) + "_thumbnail" + "." + image.format.lower()
+        thumbnail_path = os.path.join(target_dir, thumbnail_name)
+
+        image.save(thumbnail_path, image.format)
+
+        md = '<a href="%s"><img class="post-img" src="%s" alt="%s" /></a>' % (os.path.join("/media/img", section, name), os.path.join("/media/img", section, thumbnail_name), name)
+    else:
+        md = '<img class="post-img" src="%s" alt="%s" />' % (os.path.join("/media/img", section, name), name)
+
+    os.system("echo '%s' | xclip -i" % md)
+    print md
+
+
 def image(path, name=None, section="misc"):
     target_dir = os.path.join(base_path, "media/img", section)
     if not os.path.exists(target_dir):
@@ -69,23 +89,7 @@ def image(path, name=None, section="misc"):
 
     shutil.copy(path, target)
 
-    image = Image.open(path)
-
-    if image.size[0] > 848:
-        print "[info] generating thumbnail"
-        image.thumbnail((848, 848))
-
-        thumbnail_name = ".".join(name.split(".")[:-1]) + "_thumbnail" + "." + image.format.lower()
-        thumbnail_path = os.path.join(target_dir, thumbnail_name)
-
-        image.save(thumbnail_path, image.format)
-
-        md = '<a href="%s"><img class="post-img" src="%s" alt="%s" /></a>' % (os.path.join("/media/img", section, name), os.path.join("/media/img", section, thumbnail_name), name)
-    else:
-        md = '<img class="post-img" src="%s" alt="%s" />' % (os.path.join("/media/img", section, name), name)
-
-    os.system("echo '%s' | xclip -i" % md)
-    print md
+    generate_html_and_thumbnail(path, name, target_dir, section)
 
 
 def screenshot(sleep=None, section="misc", s=True, name=None):
@@ -103,30 +107,16 @@ def screenshot(sleep=None, section="misc", s=True, name=None):
     elif not name.endswith(".png", ".PNG"):
         name += ".png"
 
-    command += " " + os.path.join(target_dir, name)
+    path = os.path.join(target_dir, name)
+
+    command += " " + path
 
     if sleep:
         time.sleep(int(sleep))
 
     os.system(command)
 
-    image = Image.open(os.path.join(target_dir, name))
-
-    if image.size[0] > 848:
-        print "[info] generating thumbnail"
-        image.thumbnail((848, 848))
-
-        thumbnail_name = ".".join(name.split(".")[:-1]) + "_thumbnail" + "." + image.format.lower()
-        thumbnail_path = os.path.join(target_dir, thumbnail_name)
-
-        image.save(thumbnail_path, image.format)
-
-        md = '<a href="%s"><img class="post-img" src="%s" alt="%s" /></a>' % (os.path.join("/media/img", section, name), os.path.join("/media/img", section, thumbnail_name), name)
-    else:
-        md = '<img class="post-img" src="%s" alt="%s" />' % (os.path.join("/media/img", section, name), name)
-
-    os.system("echo '%s' | xclip -i" % md)
-    print md
+    generate_html_and_thumbnail(path, name, target_dir, section)
 
 
 parser = argh.ArghParser()
