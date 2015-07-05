@@ -61,7 +61,7 @@ def image(path, name=None, section="misc"):
 
     shutil.copy(path, target)
 
-    md = '<img src="%s" alt="%s" />' % (target, name)
+    md = '<img src="%s" alt="%s" />' % (os.path.join("/media/img", section, name), name)
     os.system("echo '%s' | xclip -i" % md)
     print md
 
