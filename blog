@@ -3,6 +3,7 @@
 import os
 import re
 import argh
+import shutil
 from datetime import date
 
 import unicodedata
@@ -31,6 +32,12 @@ def install_blog():
 
 def post(title):
     install_blog()
+    if not os.path.exists(os.path.expanduser("~/code/blog/worlddomination.be/content/blog/%s/" % current_year())):
+        os.makedirs(os.path.expanduser("~/code/blog/worlddomination.be/content/blog/%s/" % current_year()))
+
+    if not os.path.exists(os.path.expanduser("~/code/blog/worlddomination.be/content/blog/%s/%s.html" % (current_year(), current_year()))):
+        shutil.copy(os.path.expanduser("~/code/blog/worlddomination.be/content/blog/2010/2010.html"), os.path.expanduser("~/code/blog/worlddomination.be/content/blog/%s/%s.html" % (current_year(), current_year())))
+
     os.system("vi %s" % os.path.expanduser("~/code/blog/worlddomination.be/content/blog/%s/%s.html" % (current_year(), slugify(title.decode("Utf-8")))))
 
 
