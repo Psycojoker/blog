@@ -4,8 +4,9 @@ import os
 import re
 import sys
 import argh
+import time
 import shutil
-from datetime import date
+from datetime import date, datetime
 
 import unicodedata
 
@@ -87,8 +88,49 @@ def image(path, name=None, section="misc"):
     print md
 
 
+def screenshot(sleep=None, section="misc", s=True, name=None):
+    target_dir = os.path.join(base_path, "media/img", section)
+    if not os.path.exists(target_dir):
+        os.makedirs(target_dir)
+
+    command = "scrot"
+
+    if s:
+        command += " -s"
+
+    if name is None:
+        name = datetime.now().strftime("screenshot_%Y-%m-%d.png")
+    elif not name.endswith(".png", ".PNG"):
+        name += ".png"
+
+    command += " " + os.path.join(target_dir, name)
+
+    if sleep:
+        time.sleep(int(sleep))
+
+    os.system(command)
+
+    image = Image.open(os.path.join(target_dir, name))
+
+    if image.size[0] > 848:
+        print "[info] generating thumbnail"
+        image.thumbnail((848, 848))
+
+        thumbnail_name = ".".join(name.split(".")[:-1]) + "_thumbnail" + "." + image.format.lower()
+        thumbnail_path = os.path.join(target_dir, thumbnail_name)
+
+        image.save(thumbnail_path, image.format)
+
+        md = '<a href="%s"><img class="post-img" src="%s" alt="%s" /></a>' % (os.path.join("/media/img", section, name), os.path.join("/media/img", section, thumbnail_name), name)
+    else:
+        md = '<img class="post-img" src="%s" alt="%s" />' % (os.path.join("/media/img", section, name), name)
+
+    os.system("echo '%s' | xclip -i" % md)
+    print md
+
+
 parser = argh.ArghParser()
-parser.add_commands([post, image])
+parser.add_commands([post, image, screenshot])
 
 if __name__ == '__main__':
     parser.dispatch()
