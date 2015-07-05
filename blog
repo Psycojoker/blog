@@ -22,8 +22,11 @@ def current_year():
 
 
 def install_blog():
-    os.makedirs(os.path.expanduser("~/code/blog/"))
-    os.system("cd ~/code/blog/ && git clone https://github.com/psycojoker/worlddomination.be && cd worlddomination.be && make")
+    if not os.path.exists(os.path.expanduser("~/code/blog/")):
+        os.makedirs(os.path.expanduser("~/code/blog/"))
+
+    if not os.path.exists(os.path.expanduser("~/code/blog/worlddomination.be/")):
+        os.system("cd ~/code/blog/ && git clone https://github.com/psycojoker/worlddomination.be && cd worlddomination.be && make")
 
 
 def post(title):
