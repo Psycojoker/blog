@@ -15,6 +15,24 @@ from PIL import Image
 
 base_path = os.path.expanduser("~/code/blog/worlddomination.be/")
 
+new_post = """\
+{%% extends "_post.html" %%}
+
+{%% hyde
+    title: %s
+    created: %s
+%%}
+
+{%% block article %%}
+{%% article %%}
+{%% excerpt %%}
+
+
+
+{%% endexcerpt %%}
+{%% endarticle %%}
+{%% endblock %%}
+"""
 
 def slugify(value):
     """
@@ -45,7 +63,13 @@ def post(title):
     if not os.path.exists(os.path.join(base_path, "/content/blog/%s/%s.html" % (current_year(), current_year()))):
         shutil.copy(os.path.join(base_path, "content/blog/2010/2010.html"), os.path.join(base_path, "content/blog/%s/%s.html" % (current_year(), current_year())))
 
-    os.system("vi %s" % os.path.join(base_path, "content/blog/%s/%s.html" % (current_year(), slugify(title.decode("Utf-8")))))
+    post_path = os.path.join(base_path, "content/blog/%s/%s.html" % (current_year(), slugify(title.decode("Utf-8"))))
+
+    print post_path
+    if not os.path.exists(post_path):
+        open(post_path, "w").write(new_post % (title, datetime.now().strftime("%F %X")))
+
+    os.system("vi +12 %s" % post_path)
 
 
 def generate_html_and_thumbnail(path, name, target_dir, section):
