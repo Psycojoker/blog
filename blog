@@ -55,7 +55,7 @@ def install_blog():
         os.system("cd ~/code/blog/ && git clone https://github.com/psycojoker/worlddomination.be && cd worlddomination.be && make")
 
 
-def post(title):
+def post(title, d=None):
     install_blog()
     if not os.path.exists(os.path.join(base_path, "content/blog/%s/" % current_year())):
         os.makedirs(os.path.join(base_path, "content/blog/%s/" % current_year()))
@@ -67,7 +67,18 @@ def post(title):
 
     print post_path
     if not os.path.exists(post_path):
-        open(post_path, "w").write(new_post % (title, datetime.now().strftime("%F %X")))
+        if d is None:
+            d = datetime.now()
+        else:
+            if re.match("^\d+/\d+$", d):
+                d = datetime.strptime(d, "%d/%m")
+                d = d.replace(year=current_year())
+                d = d.replace(hour=21)
+                d = d.replace(minute=42)
+            else:
+                d = parser.parse(d)
+
+        open(post_path, "w").write(new_post % (title, d.strftime("%F %X")))
 
     os.system("vi +12 %s" % post_path)
 
