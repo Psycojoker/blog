@@ -116,7 +116,7 @@ def image(path, name=None, section="misc"):
     generate_html_and_thumbnail(path, name, target_dir, section)
 
 
-def screenshot(sleep=None, section="misc", s=True, name=None):
+def screenshot(sleep=None, section="misc", s=True, name=None, e=False):
     target_dir = os.path.join(base_path, "media/img", section)
     if not os.path.exists(target_dir):
         os.makedirs(target_dir)
@@ -140,6 +140,9 @@ def screenshot(sleep=None, section="misc", s=True, name=None):
 
     if os.system(command) != 0:
         sys.exit(1)
+
+    if e:
+        os.system("pinta %s" % path)
 
     generate_html_and_thumbnail(path, name, target_dir, section)
 
