@@ -19,7 +19,7 @@ new_post = """\
 {%% extends "_post.html" %%}
 
 {%% hyde
-    title: %s
+    title: "%s"
     created: %s
 %%}
 
