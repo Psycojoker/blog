@@ -112,7 +112,7 @@ def image(path, name=None, section="misc"):
     path = os.path.abspath(path)
 
     if not os.path.exists(path):
-        print "Error: %s doesn't exists"
+        print "Error: %s doesn't exists" % path
         sys.exit(1)
 
     if name is None:
